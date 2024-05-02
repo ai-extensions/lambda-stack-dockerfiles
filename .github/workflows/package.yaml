@@ -1,0 +1,15 @@
+name: package
+
+jobs:
+
+  container-build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4   
+    - run: echo version ${{needs.version.outputs.app-version}}
+    - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: build & push image
+      run: |
+        IMAGE_ID=ghcr.io/ai-extensions/lambda-stack-dockerfiles/ai-extensions-lambda-stack:22.04
+        docker build . --file Dockerfile.jammy --tag $IMAGE_ID
+        docker push $IMAGE_ID
